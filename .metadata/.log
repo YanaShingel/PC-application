@@ -1,0 +1,214 @@
+!SESSION 2016-12-21 14:51:41.500 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.7.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=ru_RU
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.osgi 4 0 2016-12-21 15:00:00.192
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+java.lang.RuntimeException: /usr/lib/eclipse/configuration/org.eclipse.osgi/.lazy.1 (Нет такого файла или каталога)
+	at org.eclipse.osgi.internal.resolver.BundleDescriptionImpl.loadLazyData(BundleDescriptionImpl.java:665)
+	at org.eclipse.osgi.internal.resolver.BundleDescriptionImpl.getResolvedGenericRequires(BundleDescriptionImpl.java:253)
+	at org.eclipse.osgi.internal.resolver.StateHelperImpl.buildReferences(StateHelperImpl.java:351)
+	at org.eclipse.osgi.internal.resolver.StateHelperImpl.sortBundles(StateHelperImpl.java:305)
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.sortByDependencies(StartLevelManager.java:524)
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.sortByDependency(StartLevelManager.java:496)
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.getInstalledBundles(StartLevelManager.java:481)
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.doSetStartLevel(StartLevelManager.java:251)
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.shutdown(StartLevelManager.java:215)
+	at org.eclipse.osgi.framework.internal.core.InternalSystemBundle.suspend(InternalSystemBundle.java:284)
+	at org.eclipse.osgi.framework.internal.core.Framework.shutdown(Framework.java:692)
+	at org.eclipse.osgi.framework.internal.core.Framework.close(Framework.java:600)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.shutdown(EclipseStarter.java:399)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:199)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:629)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:584)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1438)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1414)
+Caused by: java.io.FileNotFoundException: /usr/lib/eclipse/configuration/org.eclipse.osgi/.lazy.1 (Нет такого файла или каталога)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(FileInputStream.java:146)
+	at org.eclipse.osgi.framework.util.SecureAction.getFileInputStream(SecureAction.java:123)
+	at org.eclipse.osgi.internal.resolver.StateReader.openLazyFile(StateReader.java:778)
+	at org.eclipse.osgi.internal.resolver.StateReader.fullyLoad(StateReader.java:816)
+	at org.eclipse.osgi.internal.resolver.BundleDescriptionImpl.loadLazyData(BundleDescriptionImpl.java:662)
+	... 21 more
+
+!ENTRY org.eclipse.osgi 4 0 2016-12-21 15:00:00.194
+!MESSAGE Shutdown error
+!STACK 1
+java.lang.RuntimeException: /usr/lib/eclipse/configuration/org.eclipse.osgi/.lazy.1 (Нет такого файла или каталога)
+	at org.eclipse.osgi.internal.resolver.BundleDescriptionImpl.loadLazyData(BundleDescriptionImpl.java:665)
+	at org.eclipse.osgi.internal.resolver.BundleDescriptionImpl.getResolvedGenericRequires(BundleDescriptionImpl.java:253)
+	at org.eclipse.osgi.internal.resolver.StateHelperImpl.buildReferences(StateHelperImpl.java:351)
+	at org.eclipse.osgi.internal.resolver.StateHelperImpl.sortBundles(StateHelperImpl.java:305)
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.sortByDependencies(StartLevelManager.java:524)
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.sortByDependency(StartLevelManager.java:496)
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.getInstalledBundles(StartLevelManager.java:481)
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.doSetStartLevel(StartLevelManager.java:251)
+	at org.eclipse.osgi.framework.internal.core.StartLevelManager.shutdown(StartLevelManager.java:215)
+	at org.eclipse.osgi.framework.internal.core.InternalSystemBundle.suspend(InternalSystemBundle.java:284)
+	at org.eclipse.osgi.framework.internal.core.Framework.shutdown(Framework.java:692)
+	at org.eclipse.osgi.framework.internal.core.Framework.close(Framework.java:600)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.shutdown(EclipseStarter.java:399)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:199)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:629)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:584)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1438)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1414)
+Caused by: java.io.FileNotFoundException: /usr/lib/eclipse/configuration/org.eclipse.osgi/.lazy.1 (Нет такого файла или каталога)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(FileInputStream.java:146)
+	at org.eclipse.osgi.framework.util.SecureAction.getFileInputStream(SecureAction.java:123)
+	at org.eclipse.osgi.internal.resolver.StateReader.openLazyFile(StateReader.java:778)
+	at org.eclipse.osgi.internal.resolver.StateReader.fullyLoad(StateReader.java:816)
+	at org.eclipse.osgi.internal.resolver.BundleDescriptionImpl.loadLazyData(BundleDescriptionImpl.java:662)
+	... 21 more
+!SESSION 2016-12-21 15:00:11.312 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.7.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=ru_RU
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.jdt.ui 4 10001 2016-12-21 16:49:58.694
+!MESSAGE Internal Error
+!STACK 1
+Java Model Exception: Java Model Status [Unknown javadoc format for GridLayout {key=Ljava/awt/GridLayout;} [in GridLayout.class [in java.awt [in /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar]]]]
+	at org.eclipse.jdt.internal.core.JavadocContents.getTypeDoc(JavadocContents.java:77)
+	at org.eclipse.jdt.internal.core.BinaryType.getAttachedJavadoc(BinaryType.java:997)
+	at org.eclipse.jdt.internal.ui.text.javadoc.JavadocContentAccess2.getHTMLContent(JavadocContentAccess2.java:463)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.getHoverInfo(JavadocHover.java:619)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.internalGetHoverInfo(JavadocHover.java:565)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.getHoverInfo2(JavadocHover.java:557)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:163)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:129)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavaEditorTextHoverProxy.getHoverInfo2(JavaEditorTextHoverProxy.java:85)
+	at org.eclipse.jface.text.TextViewerHoverManager$4.run(TextViewerHoverManager.java:166)
+!SUBENTRY 1 org.eclipse.jdt.core 4 1009 2016-12-21 16:49:58.695
+!MESSAGE Unknown javadoc format for GridLayout {key=Ljava/awt/GridLayout;} [in GridLayout.class [in java.awt [in /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar]]]
+
+!ENTRY org.eclipse.jdt.ui 4 10001 2016-12-21 16:57:16.579
+!MESSAGE Internal Error
+!STACK 1
+Java Model Exception: Java Model Status [Unknown javadoc format for GridLayout {key=Ljava/awt/GridLayout;} [in GridLayout.class [in java.awt [in /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar]]]]
+	at org.eclipse.jdt.internal.core.JavadocContents.getTypeDoc(JavadocContents.java:77)
+	at org.eclipse.jdt.internal.core.BinaryType.getAttachedJavadoc(BinaryType.java:997)
+	at org.eclipse.jdt.internal.ui.text.javadoc.JavadocContentAccess2.getHTMLContent(JavadocContentAccess2.java:463)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.getHoverInfo(JavadocHover.java:619)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.internalGetHoverInfo(JavadocHover.java:565)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.getHoverInfo2(JavadocHover.java:557)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:163)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:129)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavaEditorTextHoverProxy.getHoverInfo2(JavaEditorTextHoverProxy.java:85)
+	at org.eclipse.jface.text.TextViewerHoverManager$4.run(TextViewerHoverManager.java:166)
+!SUBENTRY 1 org.eclipse.jdt.core 4 1009 2016-12-21 16:57:16.580
+!MESSAGE Unknown javadoc format for GridLayout {key=Ljava/awt/GridLayout;} [in GridLayout.class [in java.awt [in /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar]]]
+
+!ENTRY org.eclipse.jdt.ui 4 10001 2016-12-21 17:02:40.088
+!MESSAGE Internal Error
+!STACK 1
+Java Model Exception: Java Model Status [Unknown javadoc format for GridLayout {key=Ljava/awt/GridLayout;} [in GridLayout.class [in java.awt [in /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar]]]]
+	at org.eclipse.jdt.internal.core.JavadocContents.getTypeDoc(JavadocContents.java:77)
+	at org.eclipse.jdt.internal.core.BinaryType.getAttachedJavadoc(BinaryType.java:997)
+	at org.eclipse.jdt.internal.ui.text.javadoc.JavadocContentAccess2.getHTMLContent(JavadocContentAccess2.java:463)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.getHoverInfo(JavadocHover.java:619)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.internalGetHoverInfo(JavadocHover.java:565)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.getHoverInfo2(JavadocHover.java:557)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:163)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:129)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavaEditorTextHoverProxy.getHoverInfo2(JavaEditorTextHoverProxy.java:85)
+	at org.eclipse.jface.text.TextViewerHoverManager$4.run(TextViewerHoverManager.java:166)
+!SUBENTRY 1 org.eclipse.jdt.core 4 1009 2016-12-21 17:02:40.089
+!MESSAGE Unknown javadoc format for GridLayout {key=Ljava/awt/GridLayout;} [in GridLayout.class [in java.awt [in /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar]]]
+!SESSION 2016-12-22 22:14:41.192 -----------------------------------------------
+eclipse.buildId=debbuild
+java.version=1.7.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=ru_RU
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.core.resources 2 10035 2016-12-22 22:14:47.304
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+
+!ENTRY org.eclipse.jdt.ui 4 10001 2016-12-22 22:37:36.384
+!MESSAGE Internal Error
+!STACK 1
+Java Model Exception: Java Model Status [Timed out while retrieving the attached javadoc for ActionListener {key=Ljava/awt/event/ActionListener;} [in ActionListener.class [in java.awt.event [in /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar]]] ]
+	at org.eclipse.jdt.internal.core.JavaElement.getURLContents(JavaElement.java:808)
+	at org.eclipse.jdt.internal.core.BinaryType.getJavadocContents(BinaryType.java:1037)
+	at org.eclipse.jdt.internal.core.BinaryType.getAttachedJavadoc(BinaryType.java:995)
+	at org.eclipse.jdt.internal.ui.text.javadoc.JavadocContentAccess2.getHTMLContent(JavadocContentAccess2.java:463)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.getHoverInfo(JavadocHover.java:619)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.internalGetHoverInfo(JavadocHover.java:565)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.getHoverInfo2(JavadocHover.java:557)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:163)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:129)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavaEditorTextHoverProxy.getHoverInfo2(JavaEditorTextHoverProxy.java:85)
+	at org.eclipse.jface.text.TextViewerHoverManager$4.run(TextViewerHoverManager.java:166)
+!SUBENTRY 1 org.eclipse.jdt.core 4 1012 2016-12-22 22:37:36.388
+!MESSAGE Timed out while retrieving the attached javadoc for ActionListener {key=Ljava/awt/event/ActionListener;} [in ActionListener.class [in java.awt.event [in /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar]]] 
+
+!ENTRY org.eclipse.jdt.ui 4 10001 2016-12-22 22:37:55.647
+!MESSAGE Internal Error
+!STACK 1
+Java Model Exception: Java Model Status [Timed out while retrieving the attached javadoc for Container [in Container.class [in java.awt [in /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar]]] ]
+	at org.eclipse.jdt.internal.core.JavaElement.getURLContents(JavaElement.java:808)
+	at org.eclipse.jdt.internal.core.BinaryType.getJavadocContents(BinaryType.java:1037)
+	at org.eclipse.jdt.internal.core.BinaryMethod.getAttachedJavadoc(BinaryMethod.java:639)
+	at org.eclipse.jdt.internal.ui.text.javadoc.JavadocContentAccess2.getHTMLContent(JavadocContentAccess2.java:463)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.getHoverInfo(JavadocHover.java:619)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.internalGetHoverInfo(JavadocHover.java:565)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.getHoverInfo2(JavadocHover.java:557)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:163)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:129)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavaEditorTextHoverProxy.getHoverInfo2(JavaEditorTextHoverProxy.java:85)
+	at org.eclipse.jface.text.TextViewerHoverManager$4.run(TextViewerHoverManager.java:166)
+!SUBENTRY 1 org.eclipse.jdt.core 4 1012 2016-12-22 22:37:55.648
+!MESSAGE Timed out while retrieving the attached javadoc for Container [in Container.class [in java.awt [in /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar]]] 
+
+!ENTRY org.eclipse.jdt.ui 4 10001 2016-12-22 22:41:20.270
+!MESSAGE Internal Error
+!STACK 1
+Java Model Exception: Java Model Status [Timed out while retrieving the attached javadoc for SequentialGroup [in GroupLayout$SequentialGroup.class [in javax.swing [in /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar]]] ]
+	at org.eclipse.jdt.internal.core.JavaElement.getURLContents(JavaElement.java:808)
+	at org.eclipse.jdt.internal.core.BinaryType.getJavadocContents(BinaryType.java:1037)
+	at org.eclipse.jdt.internal.core.BinaryMethod.getAttachedJavadoc(BinaryMethod.java:639)
+	at org.eclipse.jdt.internal.ui.text.javadoc.JavadocContentAccess2.getHTMLContent(JavadocContentAccess2.java:463)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.getHoverInfo(JavadocHover.java:619)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.internalGetHoverInfo(JavadocHover.java:565)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.getHoverInfo2(JavadocHover.java:557)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:163)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:129)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavaEditorTextHoverProxy.getHoverInfo2(JavaEditorTextHoverProxy.java:85)
+	at org.eclipse.jface.text.TextViewerHoverManager$4.run(TextViewerHoverManager.java:166)
+!SUBENTRY 1 org.eclipse.jdt.core 4 1012 2016-12-22 22:41:20.270
+!MESSAGE Timed out while retrieving the attached javadoc for SequentialGroup [in GroupLayout$SequentialGroup.class [in javax.swing [in /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar]]] 
+
+!ENTRY org.eclipse.jdt.ui 4 10001 2016-12-22 22:46:07.982
+!MESSAGE Internal Error
+!STACK 1
+Java Model Exception: Java Model Status [Timed out while retrieving the attached javadoc for Alignment [in GroupLayout$Alignment.class [in javax.swing [in /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar]]] ]
+	at org.eclipse.jdt.internal.core.JavaElement.getURLContents(JavaElement.java:808)
+	at org.eclipse.jdt.internal.core.BinaryType.getJavadocContents(BinaryType.java:1037)
+	at org.eclipse.jdt.internal.core.BinaryField.getAttachedJavadoc(BinaryField.java:121)
+	at org.eclipse.jdt.internal.ui.text.javadoc.JavadocContentAccess2.getHTMLContent(JavadocContentAccess2.java:463)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.getHoverInfo(JavadocHover.java:619)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.internalGetHoverInfo(JavadocHover.java:565)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavadocHover.getHoverInfo2(JavadocHover.java:557)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:163)
+	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:129)
+	at org.eclipse.jdt.internal.ui.text.java.hover.JavaEditorTextHoverProxy.getHoverInfo2(JavaEditorTextHoverProxy.java:85)
+	at org.eclipse.jface.text.TextViewerHoverManager$4.run(TextViewerHoverManager.java:166)
+!SUBENTRY 1 org.eclipse.jdt.core 4 1012 2016-12-22 22:46:07.983
+!MESSAGE Timed out while retrieving the attached javadoc for Alignment [in GroupLayout$Alignment.class [in javax.swing [in /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar]]] 

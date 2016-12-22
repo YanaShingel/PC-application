@@ -1,0 +1,372 @@
+package readcontroller;
+
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferStrategy;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
+
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+@SuppressWarnings("serial")
+public class MainFrame extends JFrame {
+
+	int timeCounter = 0;
+	final MainFrame mainFrame;
+
+	Thread pointReader;
+	boolean runningPointReader;
+
+	JTabbedPane tabs;
+
+	final JLabel label1;
+	final JTextField textField1;
+
+	final JLabel label2, label3, label4;
+	final JTextField textField2, textField3;
+
+	final JButton button1, button2;
+
+	JPanel portPanel, graphPanel;
+	GroupLayout layoutPort;
+	GridLayout layoutGraph;
+
+	ArrayList<Integer> points;
+
+	Container container;
+
+	Globals globals;
+
+	SerialHelper sh;
+
+	public void addPoint(int x, int y) {
+		
+		
+		
+		float minVoltage = 0;
+		float maxVoltage = 10;
+		
+		float steps = 20;
+
+		timeCounter++;
+		
+		if (points.size() > 1000)
+			return;
+
+		points.add(x);
+		points.add(y);
+
+		int width = getWidth();
+		int height = getHeight();
+		
+		int xAxisBottom = height - 40;
+		int votageBottom = 40;
+
+		int xStep = (int) (width / steps);
+		int yStep = (int) (height / steps);
+
+		BufferStrategy myStrategy = getBufferStrategy();
+		Graphics g = myStrategy.getDrawGraphics();
+		g.clearRect(0, 0, getWidth(), getHeight());
+
+		g.setColor(new Color(0, 0, 0));
+		g.fillRect(0, 0, width, height);
+
+		int j = 0;
+
+		g.setColor(new Color(0, 200, 0));
+		g.drawLine(20, height - 60, 20, 0);
+
+		// xAxis
+		g.setColor(new Color(0, 200, 0));
+		g.drawLine(20, xAxisBottom , width, xAxisBottom);
+		
+		for (int i = 0; i < 20; i++){
+			g.drawLine(10, i * yStep, 30, i * yStep);
+			g.drawLine(i * xStep, height - 50, i * xStep, height - 70);
+		}
+
+		for (int i = 0; i < points.size() / 2 - 1; i++) {
+
+			if (points.size() > 40) {
+				j = (points.size() / 2 - 20) * xStep;
+			}
+
+			g.setColor(new Color(255, 100, 100));
+
+			float x1 = points.get(i * 2) * xStep - j;
+			float x2 = points.get((i + 1) * 2) * xStep - j;
+
+			float y1 = points.get(i * 2 + 1) / 2048.0f * (height) + 100;
+			float y2 = points.get((i + 1) * 2 + 1) / 2048.0f * (height) + 100;
+
+			g.drawLine((int) x1, (int) y1, (int) x2, (int) y2);
+			
+			
+			
+		}
+		
+		for (int i = 0; i < 20; i++){
+			char[] timeText = new String("" + (timeCounter + i)).toCharArray();
+			g.drawChars(timeText, 0, timeText.length, 50 + i * xStep, height-90);
+		}
+		
+		float voltStep = ((maxVoltage - minVoltage)/steps);
+		
+		for (int i = 0; i < 20; i++){
+			char[] voltText = new String("" + voltStep * i).toCharArray();
+			g.drawChars(voltText, 0, voltText.length, 0, height - 90 - i * yStep);
+		}
+
+		 g.dispose();
+
+		 myStrategy.show();
+
+	}
+
+	public MainFrame(Globals g) {
+
+		runningPointReader = false;
+		pointReader = new Thread(new PointReader());
+		points = new ArrayList<>();
+		globals = g;
+		mainFrame = this;
+
+		sh = new SerialHelper();
+		sh.sc = new SerialCallback() {
+
+			@Override
+			public void onProcessed(byte[] buffer, int code) {
+				// TODO Auto-generated method stub
+				switch (code) {
+				case 'V':
+					label4.setText(new String(buffer));
+					break;
+
+				case 'A':
+					String response = new String(buffer);
+					int xCount = Integer.valueOf(response.substring(0,
+							response.indexOf(' ')));
+					int yCount = Integer.valueOf(response.substring(
+							response.indexOf(' ') + 1, response.length()));
+					addPoint(xCount, yCount);
+					break;
+
+				case 'R':
+					break;
+
+				}
+			}
+
+		};
+
+		setSize(500, 500);
+		label1 = new JLabel("Port:");
+		textField1 = new JTextField();
+
+		label2 = new JLabel("Speed:");
+		textField2 = new JTextField();
+
+		label3 = new JLabel("Version:");
+		textField3 = new JTextField();
+
+		label4 = new JLabel("");
+		button1 = new JButton("GET version");
+
+		button1.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				sh.request('V', null);
+			}
+
+		});
+
+		button2 = new JButton("Connect");
+
+		container = getContentPane();
+		portPanel = new JPanel();
+
+		InitPortLayout();
+		InitGraphLayout();
+		addTabs();
+
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+		container.add(tabs);
+		container.setVisible(true);
+
+	}
+
+	private void InitGraphLayout() {
+
+		graphPanel = new JPanel();
+		layoutGraph = new GridLayout(1, 1);
+		graphPanel.setLayout(layoutGraph);
+	}
+
+	private void InitPortLayout() {
+		layoutPort = new GroupLayout(portPanel);
+		portPanel.setLayout(layoutPort);
+		layoutPort.setAutoCreateGaps(true);
+		layoutPort.setAutoCreateContainerGaps(true);
+
+		layoutPort
+				.setHorizontalGroup(layoutPort
+						.createSequentialGroup()
+						.addGroup(
+								layoutPort.createParallelGroup(LEADING)
+										.addComponent(label1)
+										.addComponent(label2)
+										.addComponent(label3))
+						.addGroup(
+								layoutPort.createParallelGroup()
+										.addComponent(textField1)
+										.addComponent(textField2)
+										.addComponent(button1))
+						.addGroup(
+								layoutPort.createParallelGroup()
+										.addComponent(label4)
+										.addComponent(button2)));
+
+		// layoutPort.linkSize(SwingConstants.HORIZONTAL, findButton,
+		// cancelButton);
+
+		layoutPort.setVerticalGroup(layoutPort
+				.createSequentialGroup()
+				.addGroup(
+						layoutPort.createParallelGroup(BASELINE)
+								.addComponent(label1).addComponent(textField1))
+				.addGroup(
+						layoutPort.createParallelGroup(BASELINE)
+								.addComponent(label2).addComponent(textField2))
+				.addGroup(
+						layoutPort.createParallelGroup(BASELINE)
+								.addComponent(label3).addComponent(button1)
+								.addComponent(label4))
+				.addGroup(
+						layoutPort.createParallelGroup(BASELINE).addComponent(
+								button2)));
+
+		String a = "Resolved-Rejected";
+		System.out.println(a.contains("Resolved"));
+	}
+
+	private void addTabs() {
+		tabs = new JTabbedPane();
+		tabs.addTab("Connection", portPanel);
+
+		tabs.addTab("Graph", graphPanel);
+		tabs.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent a) {
+				if (tabs.getSelectedIndex() == 1) {
+					requestPoints();
+				} else {
+					suspendPointRequests();
+				}
+			}
+
+		});
+		// tabs.addTab("Result", graphPanel);
+	}
+
+	protected void suspendPointRequests() {
+		runningPointReader = false;
+	}
+
+	class PointReader implements Runnable {
+
+		@Override
+		public void run() {
+
+			// sh.request('R', null);
+
+			while (runningPointReader) {
+
+				try {
+					sh.request('A', null);
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			setSize(499, 499);
+		}
+
+	}
+
+	protected void requestPoints() {
+		runningPointReader = true;
+
+		if (pointReader != null) {
+			pointReader = new Thread(new PointReader());
+			pointReader.start();
+		}
+
+	}
+
+	public static void main(String args[]) {
+
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					UIManager
+							.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+
+				Globals g = new Globals();
+				g.setMainFrame(new MainFrame(g));
+				g.getMainFrame().setVisible(true);
+
+			}
+
+			@SuppressWarnings("unused")
+			private void generateImitationalFile() throws IOException {
+
+				FileOutputStream fileOut = new FileOutputStream("data.gen");
+				Random rand = new Random();
+				int count = (int) (rand.nextDouble() * 100 + 30);
+				int count2 = (int) (rand.nextDouble() * 30 + 5);
+
+				for (int i = 0; i < count; i++) {
+					StringBuilder line = new StringBuilder();
+					line.append("ADC ");
+					for (int j = 0; j < count2; j++) {
+						line.append(j + ":" + (int) (rand.nextDouble() * 1024)
+								+ (j == (count2 - 1) ? "" : ","));
+					}
+					line.append('\n');
+					fileOut.write(line.toString().getBytes());
+				}
+
+				fileOut.close();
+			}
+		});
+	}
+}

@@ -1,0 +1,81 @@
+package readcontroller;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import com.fazecast.jSerialComm.SerialPort;
+
+public class SerialHelper {
+
+	SerialCallback sc;
+	SerialPort comPort;
+
+	public SerialHelper() {
+		if (SerialPort.getCommPorts().length > 0) {
+			comPort = SerialPort.getCommPorts()[0];
+			comPort.openPort();
+			comPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING,
+					100, 0);
+			comPort.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_SEMI_BLOCKING,
+					100, 0);
+			comPort.setBaudRate(57600);
+		}
+	}
+
+	public void request(int code, byte[] response) {
+
+		InputStream in = comPort.getInputStream();
+		OutputStream out = comPort.getOutputStream();
+		
+
+
+		int capacity = 0;
+
+		try {
+
+			out.write(code);
+			out.close();
+
+			while ((capacity = in.available()) <= 0) {
+				Thread.sleep(20);
+				// countToReopen++;
+
+				/*
+				 * if (countToReopen == 10) { in.close(); out.close();
+				 * 
+				 * out = comPort.getOutputStream(); out.write(code);
+				 * out.close();
+				 * 
+				 * in = comPort.getInputStream(); countToReopen = 0; }
+				 */
+			}
+
+			byte[] buffer = new byte[capacity];
+			int p = 0;
+
+			while (in.available() > 0)
+				buffer[p++] = (byte) in.read();
+
+			sc.onProcessed(buffer, code);
+			in.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// comPort.closePort();
+
+	}
+
+	public void connect() {
+		if (SerialPort.getCommPorts().length > 0) {
+			comPort = SerialPort.getCommPorts()[0];
+			comPort.openPort();
+			comPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING,
+					100, 0);
+			comPort.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_SEMI_BLOCKING,
+					100, 0);
+			comPort.setBaudRate(57600);
+		}
+	}
+
+}
