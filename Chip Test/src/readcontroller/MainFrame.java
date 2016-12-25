@@ -6,6 +6,7 @@ import static javax.swing.GroupLayout.Alignment.LEADING;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -229,7 +230,7 @@ public class MainFrame extends JFrame {
 		portPanel = new JPanel();
 
 		InitPortLayout();
-		InitGraphLayout();
+		// InitGraphLayout();
 		initCalibrationPanel();
 		addTabs();
 
@@ -240,62 +241,31 @@ public class MainFrame extends JFrame {
 
 	}
 
-	private void InitGraphLayout() {
-
+	private void initCalibrationPanel() {
+		
 		graphPanel = new JPanel();
-		//layoutGraph = new GridLayout(1, 1);
-		graphPanel.setLayout(layoutGraph);
-	}
-
-	private void initCalibrationPanel(){
-		
-		calibrationLayout = new GridLayout(2,2);
-		
+		graphPanel.setLayout(null);
 		label5 = new JLabel("Calibration");
+		label5.setBounds(10, 10, 100, 100);
+		graphPanel.add(label5);
 		button5 = new JButton("Run graph");
-		
-		calibrationPanel = new JPanel();
-		calibrationPanel.setLayout(calibrationLayout);
-		
-		calibrationPanel.add(label5);
-		calibrationPanel.add(button5);
+		button5.setBounds(210, 120, 200, 50);
+		graphPanel.add(button5);
 		
 		
-//		layoutGraph = new GroupLayout(calibrationPanel);
-//		calibrationPanel.setLayout(layoutGraph);
-//		layoutGraph.setAutoCreateGaps(true);
-//		layoutGraph.setAutoCreateContainerGaps(true);
-//		layoutGraph.setHorizontalGroup (layoutGraph.createSequentialGroup()
-//				.addGroup(
-//						layoutGraph.createParallelGroup(LEADING)
-//								.addComponent(label5)
-//				.addGroup(
-//						layoutGraph.createParallelGroup(LEADING)
-//					.addGroup(
-//						layoutGraph.createParallelGroup(LEADING)	
-//								.addComponent(button5)))));
-//		
-//
-//		layoutGraph.setVerticalGroup(layoutGraph
-//		.createSequentialGroup()
-//		.addGroup(
-//				layoutPort.createParallelGroup(BASELINE)
-//						.addComponent(label5).addComponent(button5)));
-		
-		
-		button5.addActionListener(new ActionListener(){
+		button5.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				button5.setVisible(false);
 				label5.setVisible(false);
-				//button5.setVisible(false);
+				// button5.setVisible(false);
 				requestPoints();
-				
+
 			}
-			
+
 		});
-		
+
 	}
 
 	private void InitPortLayout() {
@@ -349,7 +319,7 @@ public class MainFrame extends JFrame {
 		tabs = new JTabbedPane();
 		tabs.addTab("Connection", portPanel);
 
-		tabs.addTab("Calibration", calibrationPanel);
+		tabs.addTab("Calibration", graphPanel);
 
 		// tabs.addTab("Graph", graphPanel);
 		tabs.addChangeListener(new ChangeListener() {
