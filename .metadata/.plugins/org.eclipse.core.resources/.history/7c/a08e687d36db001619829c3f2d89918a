@@ -1,0 +1,5 @@
+package readcontroller;
+
+public class TimedGraphBuilder extends GraphBuilder {
+
+}

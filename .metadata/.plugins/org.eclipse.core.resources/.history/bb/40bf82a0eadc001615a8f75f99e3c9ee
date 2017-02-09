@@ -1,0 +1,699 @@
+package readcontroller;
+
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferStrategy;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
+
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import readcontroller.GraphBuilder.Point;
+
+@SuppressWarnings("serial")
+public class MainFrame extends JFrame {
+
+	final MainFrame mainFrame;
+
+	Thread pointReader;
+	boolean runningPointReader;
+
+	JTabbedPane tabs;
+
+	final JLabel label1;
+	final JTextField textField1;
+	
+	JLabel testLabel;
+	JButton test;
+
+	final JLabel label2, label3, label4, value0, value100, valueN, valueCalc,
+			value0D0, value100D0, valueND0, valueCalcD0;
+
+	JTextArea label5;
+	final JTextField textField2, textField3, textField0, textField100,
+			textFieldN, textFieldCalc, textField0D0, textField100D0,
+			textFieldND0, textFieldCalcD0;
+
+	final JButton button1, button2, button0, button100, buttonN, buttonCalc, button0D0, button100D0, buttonND0, buttonCalcD0;
+
+	JButton button5, button6;
+
+	JPanel portPanel, graphPanel, calibrationPanel, testingPanel;
+	GroupLayout layoutPort;
+	// GridLayout layoutGraph;
+	GridLayout calibrationLayout;
+	GridLayout testingLayout;
+	GroupLayout layoutGraph;
+
+	Container container;
+
+	Globals globals;
+
+	SerialHelper sh;
+	
+	TimedGraphBuilder graphBuilder, graphBuilderD0;
+
+//	public void addPoint(int x, int y) {
+//
+//		float minVoltage = 0;
+//		float maxVoltage = 10;
+//
+//		float steps = 20;
+//
+//		sh.timeCounter++;
+//
+//		if (sh.points.size() > 1000)
+//			return;
+//
+//		sh.points.add(x);
+//		sh.points.add(y);
+//
+//		int width = getWidth();
+//		int height = getHeight();
+//
+//		int yOffset = height / 20;
+//		int xAxisBottom = height - yOffset;
+//		int xOffset = 20;
+//
+//		int xStep = (int) (width / steps);
+//		int yStep = (int) (height / steps);
+//
+//		
+//		BufferStrategy myStrategy = getBufferStrategy();
+//		Graphics g = myStrategy.getDrawGraphics();
+//		g.clearRect(0, 0, getWidth(), getHeight());
+//
+//		g.setColor(new Color(0, 0, 0));
+//		g.fillRect(0, 0, width, height);
+//
+//		int j = 0;
+//
+//		g.setColor(new Color(0, 200, 0));
+//		g.drawLine(20, xAxisBottom, 20, 0);
+//
+//		// xAxis
+//		g.setColor(new Color(0, 200, 0));
+//		g.drawLine(xOffset, xAxisBottom, width, xAxisBottom);
+//
+//		for (int i = 0; i < 20; i++) {
+//			g.drawLine(xOffset - 10, (i + 1) * yStep + yOffset, xOffset + 10,
+//					(i + 1) * yStep + yOffset);
+//			g.drawLine(i * xStep + xOffset, xAxisBottom - 10, i * xStep
+//					+ xOffset, xAxisBottom + 10);
+//		}
+//
+//		for (int i = 0; i < sh.points.size() / 2 - 1; i++) {
+//
+//			if (sh.points.size() > 40) {
+//				j = (sh.points.size() / 2 - 20) * xStep;
+//			}
+//
+//			g.setColor(new Color(255, 100, 100));
+//
+//			float x1 = sh.points.get(i * 2) * xStep - j + xOffset;
+//			float x2 = sh.points.get((i + 1) * 2) * xStep - j + xOffset;
+//
+//			float y1 = xAxisBottom / 2048.0f * (sh.points.get(i * 2 + 1))
+//					+ yOffset;
+//			// float y2 = points.get((i + 1) * 2 + 1) / 2048.0f * (height);
+//			float y2 = xAxisBottom / 2048.0f * (sh.points.get((i + 1) * 2 + 1))
+//					+ yOffset;
+//
+//			g.drawLine((int) x1, (int) y1, (int) x2, (int) y2);
+//
+//		}
+//
+//		for (int i = 0; i < xOffset; i++) {
+//			char[] timeText;
+//			if (sh.timeCounter >= xOffset)
+//				timeText = new String("" + (sh.timeCounter + i - xOffset))
+//						.toCharArray();
+//			else
+//				timeText = new String("" + (i)).toCharArray();
+//			g.drawChars(timeText, 0, timeText.length, 50 + i * xStep,
+//					xAxisBottom - 10);
+//		}
+//
+//		float voltStep = ((maxVoltage - minVoltage) / steps);
+//
+//		for (int i = 0; i < 20; i++) {
+//			char[] voltText = new String("" + voltStep * i).toCharArray();
+//			g.drawChars(voltText, 0, voltText.length, 0, xAxisBottom - i
+//					* yStep);
+//		}
+//
+//		g.dispose();
+//
+//		myStrategy.show();
+//
+//	}
+
+	public MainFrame(Globals g) {
+
+		// this.setResizable(false);
+		runningPointReader = false;
+		pointReader = new Thread(new PointReader('A'));
+
+		globals = g;
+		mainFrame = this;
+
+		sh = new SerialHelper();
+		sh.sc = new SerialCallback() {
+
+			@Override
+			public void onProcessed(byte[] buffer, int code) {
+				// TODO Auto-generated method stub
+				switch (code) {
+				case 'V':
+					label4.setText(new String(buffer));
+					break;
+
+				case 'A':
+					String response = new String(buffer);
+					response = response.replaceAll(" \r\n", "");
+//					int xCount = Integer.valueOf(response.substring(0,
+//							response.indexOf(' ')));
+					int yCount = Integer.valueOf(response.substring(
+							response.indexOf(' ') + 1, response.length()));
+					//addPoint(xCount, yCount);
+					graphBuilder.addPoint(yCount);
+					break;
+				case 'B':
+					response = new String(buffer);
+					response = response.replaceAll(" \r\n", "");
+//					int xCount = Integer.valueOf(response.substring(0,
+//							response.indexOf(' ')));
+					yCount = Integer.valueOf(response.substring(
+							response.indexOf(' ') + 1, response.length()));
+					//addPoint(xCount, yCount);
+					graphBuilderD0.addPoint(yCount);
+					break;
+				case '0':
+					textField0.setText(new String(buffer));
+					break;
+				case '1':
+					textField100.setText(new String(buffer));
+					break;
+				case '2':
+					textFieldN.setText(new String(buffer));
+					break;
+				case '3':
+					textField0D0.setText(new String(buffer));
+					break;
+				case '4':
+					textField100D0.setText(new String(buffer));
+					break;
+				case '5':
+					textFieldND0.setText(new String(buffer));
+					break;
+				case '6':
+					testLabel.setText(new String(buffer));
+					break;
+
+				case 'R':
+					break;
+
+				}
+			}
+
+		};
+
+		setSize(1300, 1300);
+		label1 = new JLabel("Port:");
+		textField1 = new JTextField();
+
+		label2 = new JLabel("Speed:");
+		textField2 = new JTextField();
+
+		label3 = new JLabel("Version:");
+		textField3 = new JTextField();
+
+		label4 = new JLabel("");
+		button1 = new JButton("GET version");
+
+		value0 = new JLabel("Value 0 mA:");
+		textField0 = new JTextField();
+		value100 = new JLabel("Value 100 mA:");
+		textField100 = new JTextField();
+		valueN = new JLabel("Value N mA:");
+		textFieldN = new JTextField();
+
+		valueCalc = new JLabel("Real value current:");
+		textFieldCalc = new JTextField();
+
+		button0 = new JButton("GET value 0 mA");
+		button100 = new JButton("GET value 100 mA");
+		buttonN = new JButton("GET value N mA");
+		buttonCalc = new JButton("Calculate the current");
+
+		value0D0 = new JLabel("Value 0 mA of the line D0:");
+		textField0D0 = new JTextField();
+		value100D0 = new JLabel("Value 100 mA of the line D0:");
+		textField100D0 = new JTextField();
+		valueND0 = new JLabel("Value N mA of the line D0:");
+		textFieldND0 = new JTextField();
+
+		valueCalcD0 = new JLabel("Real value current of the line D0:");
+		textFieldCalcD0 = new JTextField();
+
+		button0D0 = new JButton("GET value 0 mA of the line D0");
+		button100D0 = new JButton("GET value 100 mA of the line D0");
+		buttonND0 = new JButton("GET value N mA of the line D0");
+		buttonCalcD0 = new JButton("Calculate the current of the line D0");
+		
+		test = new JButton("Testing");
+		testLabel = new JLabel("Error");
+
+		button1.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				sh.request('V', null);
+			}
+
+		});
+
+		button0.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				sh.request('0', null);
+			}
+
+		});
+
+		button100.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				sh.request('1', null);
+			}
+
+		});
+
+		buttonN.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				sh.request('2', null);
+			}
+
+		});
+		buttonCalc.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				// textFieldCalc.setText((textFieldN-textField0)*100/textField100);
+			}
+
+		});
+		
+		button0D0.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				sh.request('3', null);
+			}
+
+		});
+
+		button100D0.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				sh.request('4', null);
+			}
+
+		});
+
+		buttonND0.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				sh.request('5', null);
+			}
+
+		});
+		buttonCalcD0.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				// textFieldCalcD0.setText((textFieldND0-textField0D0)*100/textField100D0);
+				float textFieldND0_ = Float.valueOf(textFieldND0.getText().replaceAll(" \r\n", ""));
+				float textField0D0_ = Float.valueOf(textField0D0.getText().replaceAll(" \r\n", ""));
+				float textField100D0_ = Float.valueOf(textField100D0.getText().replaceAll(" \r\n", ""));
+				
+				textFieldCalcD0.setText(Float.toString((textFieldND0_-textField0D0_)*100/textField100D0_));
+				ArrayList<Point> array = graphBuilder.getPointArray();
+				
+				for (Point p: array){
+					p.y = p.y + 100;
+				}
+			}
+
+		});
+
+		button2 = new JButton("Connect");
+		button2.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				sh.connect();
+			}
+
+		});
+		
+		test.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				sh.request('6', null);
+			}
+
+		});
+
+		container = getContentPane();
+		portPanel = new JPanel();
+
+		
+		InitPortLayout();
+		// InitGraphLayout();
+		initCalibrationPanel();
+		initTestingPanel();
+		addTabs();
+
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+		container.add(tabs);
+		container.setVisible(true);
+
+	}
+
+	private void initTestingPanel() {
+		testingPanel = new JPanel();
+		testingPanel.setLayout(null);
+		
+		
+		test.setBounds(10, 10, 100, 30);
+		testingPanel.add(test);
+		testLabel.setBounds(10, 40, 500, 50);
+		testingPanel.add(testLabel);
+	}
+
+	private void initCalibrationPanel() {
+
+		graphPanel = new JPanel();
+		graphPanel.setLayout(null);
+		label5 = new JTextArea(
+				"Чтобы получить смещение нуля, нажмите 0.\n Далее нажмите 100, далее нажмите N. Чтобы рассчитать значение тока на текущей линии нажмите Calc");
+		//label5.setSize(400, 500);
+		label5.setBounds(10, 0, 500, 50);
+		label5.setLineWrap(true);
+		graphPanel.add(label5);
+		value0.setBounds(10, 100, 100, 100);
+		textField0.setBounds(120, 140, 100, 20);
+		button0.setBounds(250, 140, 200, 20);
+		graphPanel.add(value0);
+		graphPanel.add(textField0);
+		graphPanel.add(button0);
+		value100.setBounds(10, 130, 100, 100);
+		textField100.setBounds(120, 170, 100, 20);
+		button100.setBounds(250, 170, 200, 20);
+		graphPanel.add(value100);
+		graphPanel.add(textField100);
+		graphPanel.add(button100);
+		valueN.setBounds(10, 160, 100, 100);
+		textFieldN.setBounds(120, 200, 100, 20);
+		buttonN.setBounds(250, 200, 200, 20);
+		graphPanel.add(valueN);
+		graphPanel.add(textFieldN);
+		graphPanel.add(buttonN);
+		valueCalc.setBounds(10, 190, 400, 100);
+		textFieldCalc.setBounds(150, 230, 100, 20);
+		buttonCalc.setBounds(280, 230, 200, 20);
+		graphPanel.add(valueCalc);
+		graphPanel.add(textFieldCalc);
+		graphPanel.add(buttonCalc);
+
+//линия D0		
+		value0D0.setBounds(10, 340, 190, 100);
+		textField0D0.setBounds(210, 380, 100, 20);
+		button0D0.setBounds(320, 380, 260, 20);
+		graphPanel.add(value0D0);
+		graphPanel.add(textField0D0);
+		graphPanel.add(button0D0);
+		value100D0.setBounds(10, 370, 220, 100);
+		textField100D0.setBounds(210, 410, 100, 20);
+		button100D0.setBounds(320, 410, 260, 20);
+		graphPanel.add(value100D0);
+		graphPanel.add(textField100D0);
+		graphPanel.add(button100D0);
+		valueND0.setBounds(10, 400, 220, 100);
+		textFieldND0.setBounds(210, 440, 100, 20);
+		buttonND0.setBounds(320, 440, 260, 20);
+		graphPanel.add(valueND0);
+		graphPanel.add(textFieldND0);
+		graphPanel.add(buttonND0);
+		valueCalcD0.setBounds(10, 430, 250, 100);
+		textFieldCalcD0.setBounds(250, 470, 100, 20);
+		buttonCalcD0.setBounds(360, 470, 300, 20);
+		graphPanel.add(valueCalcD0);
+		graphPanel.add(textFieldCalcD0);
+		graphPanel.add(buttonCalcD0);
+		
+		
+		
+		button5 = new JButton("Run graph D1");
+		button5.setBounds(500, 260, 150, 50);
+		graphPanel.add(button5);
+		
+		button6 = new JButton("Run graph D0");
+		button6.setBounds(500, 550, 150, 50);
+		graphPanel.add(button6);
+
+		button5.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				button5.setVisible(false);
+				label5.setVisible(false);
+				// button5.setVisible(false);
+				requestPoints();
+
+			}
+
+		});
+
+	}
+
+	private void InitPortLayout() {
+		layoutPort = new GroupLayout(portPanel);
+		portPanel.setLayout(layoutPort);
+		layoutPort.setAutoCreateGaps(true);
+		layoutPort.setAutoCreateContainerGaps(true);
+
+		layoutPort
+				.setHorizontalGroup(layoutPort
+						.createSequentialGroup()
+						.addGroup(
+								layoutPort.createParallelGroup(LEADING)
+										.addComponent(label1)
+										.addComponent(label2)
+										.addComponent(label3))
+						.addGroup(
+								layoutPort.createParallelGroup()
+										.addComponent(textField1)
+										.addComponent(textField2)
+										.addComponent(button1))
+						.addGroup(
+								layoutPort.createParallelGroup()
+										.addComponent(label4)
+										.addComponent(button2)));
+
+		// layoutPort.linkSize(SwingConstants.HORIZONTAL, findButton,
+		// cancelButton);
+
+		layoutPort.setVerticalGroup(layoutPort
+				.createSequentialGroup()
+				.addGroup(
+						layoutPort.createParallelGroup(BASELINE)
+								.addComponent(label1).addComponent(textField1))
+				.addGroup(
+						layoutPort.createParallelGroup(BASELINE)
+								.addComponent(label2).addComponent(textField2))
+				.addGroup(
+						layoutPort.createParallelGroup(BASELINE)
+								.addComponent(label3).addComponent(button1)
+								.addComponent(label4))
+				.addGroup(
+						layoutPort.createParallelGroup(BASELINE).addComponent(
+								button2)));
+
+		String a = "Resolved-Rejected";
+		System.out.println(a.contains("Resolved"));
+	}
+	
+	// DEBUG
+//	class DEBUGPointAdder implements Runnable{
+//
+//		@Override
+//		public void run() {
+//			while (true){
+//				try {
+//					Thread.sleep(1200);
+//					graphBuilder.addPoint(15);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+//		
+//	}
+
+	private void addTabs() {
+		tabs = new JTabbedPane();
+		tabs.addTab("Connection", portPanel);
+
+		tabs.addTab("Calibration", graphPanel);
+
+		tabs.addTab("Testing", testingPanel);
+
+		// tabs.addTab("Graph", graphPanel);
+		tabs.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent a) {
+				if (tabs.getSelectedIndex() == 1) {
+					button5.setVisible(true);
+					label5.setVisible(true);
+					graphBuilder = new TimedGraphBuilder(700,100,600,300,graphPanel,mainFrame);
+					graphBuilder.setMaxXAxisRange(7.0f);
+					graphBuilder.setMaxYAxisRange(2048);
+					graphBuilder.setXSkipStep(2);
+					graphBuilder.init(true);
+					
+					graphBuilderD0 = new TimedGraphBuilder(700,400,600,300,graphPanel,mainFrame);
+					graphBuilderD0.setMaxXAxisRange(7.0f);
+					graphBuilderD0.setMaxYAxisRange(2048);
+					graphBuilderD0.setXSkipStep(2);
+					graphBuilderD0.init(true);
+					//Thread thr = new Thread(new DEBUGPointAdder());
+					//thr.start();
+
+				} else {
+					suspendPointRequests();
+				}
+			}
+
+		});
+		// tabs.addTab("Result", graphPanel);
+	}
+
+	protected void suspendPointRequests() {
+		runningPointReader = false;
+	}
+
+	class PointReader implements Runnable {
+
+		char request; 
+		@Override
+		public void run() {
+
+			// sh.request('R', null);
+
+			while (runningPointReader) {
+
+				try {
+					sh.request('A', null);
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			setSize(499, 499);
+		}
+		public PointReader(char c) {
+			this.request = c;
+			
+		}
+
+	}
+	
+	
+
+	protected void requestPoints() {
+		runningPointReader = true;
+
+		if (pointReader != null) {
+			pointReader = new Thread(new PointReader());
+			pointReader.start();
+		}
+
+	}
+
+	public static void main(String args[]) {
+
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					UIManager
+							.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+
+				Globals g = new Globals();
+				g.setMainFrame(new MainFrame(g));
+				g.getMainFrame().setVisible(true);
+
+			}
+
+			@SuppressWarnings("unused")
+			private void generateImitationalFile() throws IOException {
+
+				FileOutputStream fileOut = new FileOutputStream("data.gen");
+				Random rand = new Random();
+				int count = (int) (rand.nextDouble() * 100 + 30);
+				int count2 = (int) (rand.nextDouble() * 30 + 5);
+
+				for (int i = 0; i < count; i++) {
+					StringBuilder line = new StringBuilder();
+					line.append("ADC ");
+					for (int j = 0; j < count2; j++) {
+						line.append(j + ":" + (int) (rand.nextDouble() * 1024)
+								+ (j == (count2 - 1) ? "" : ","));
+					}
+					line.append('\n');
+					fileOut.write(line.toString().getBytes());
+				}
+
+				fileOut.close();
+			}
+		});
+	}
+}

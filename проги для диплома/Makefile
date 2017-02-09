@@ -3,21 +3,21 @@ TARG=main
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 CLOCK = 16000000
-AVRDUDE = avrdude -c arduino -p m328p -P /dev/ttyUSB0 -b 57600 
+AVRDUDE = avrdude -c arduino -p m328p -P /dev/ttyUSB0 -b 57600
 # Задаем из каких файлов собирать проект, можно указать несколько файлов
-SRCS= main.c
+SRCS= main.c #light_ws2812/light_ws2812_AVR/Light_WS2812/light_ws2812.c
  
 OBJS = $(SRCS:.c=.o)
- 
+
 # Задаем для какого микроконтроллера будем компилировать (atmega8)
 MCU=atmega328p
 
-COMPILE = -mmcu=$(MCU) -Wall -g -Os -Werror
+COMPILE = -mmcu=$(MCU) -Wall -g -Os
  
 # Флаги компилятора, при помощи F_CPU определяем частоту на которой будет работать контроллер,
-CFLAGS =  $(COMPILE) -DF_CPU=$(CLOCK)
+CFLAGS  =  $(COMPILE) -DF_CPU=$(CLOCK)
 LDFLAGS = $(COMPILE) 
- 
+CFLAGS+= -Ilight_ws2812/light_ws2812_AVR/ -Ilight_ws2812/light_ws2812_AVR/Light_WS2812/
 all: $(TARG)
  
 $(TARG): $(OBJS)

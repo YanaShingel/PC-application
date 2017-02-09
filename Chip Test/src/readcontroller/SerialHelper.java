@@ -17,6 +17,7 @@ public class SerialHelper {
 	public SerialHelper() {
 		if (SerialPort.getCommPorts().length > 0) {
 			comPort = SerialPort.getCommPorts()[0];
+			System.out.print(comPort.getSystemPortName()+"\n");
 			comPort.openPort();
 			comPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING,
 					100, 0);
@@ -41,34 +42,27 @@ public class SerialHelper {
 
 			out.write(code);
 			out.close();
-
+			capacity = in.available();
 			while ((capacity = in.available()) <= 0) {
-				Thread.sleep(20);
-				// countToReopen++;
-
-				/*
-				 * if (countToReopen == 10) { in.close(); out.close();
-				 * 
-				 * out = comPort.getOutputStream(); out.write(code);
-				 * out.close();
-				 * 
-				 * in = comPort.getInputStream(); countToReopen = 0; }
-				 */
+				Thread.sleep(50);
 			}
 
-			byte[] buffer = new byte[capacity];
+			byte[] buffer = new byte[capacity-1];
 			int p = 0;
 
+			byte zxc = (byte) in.read();
+//			for (int i = 0; i < capacity; i++ ) {
+//				buffer[p++] = (byte) in.read();
+//			}
 			while (in.available() > 0)
 				buffer[p++] = (byte) in.read();
-
-			sc.onProcessed(buffer, code);
+			
+			sc.onProcessed(buffer, zxc);
 			in.close();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// comPort.closePort();
 
 	}
 

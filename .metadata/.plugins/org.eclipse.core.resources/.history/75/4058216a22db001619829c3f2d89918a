@@ -1,0 +1,27 @@
+package readcontroller;
+
+import java.util.ArrayList;
+
+public class GraphBuilder {
+	
+	class Point{
+		int x; int y;
+	}
+	
+	ArrayList<Point> pointArray;
+	
+	public void addPoint(int value){
+		// TODO:
+	}
+	
+	public void setYAxisRange(int min, int max){
+		// TODO:
+	}
+	
+	public void setXAxisRange(int min, int max){
+		// TODO:
+	}
+	
+	
+
+}

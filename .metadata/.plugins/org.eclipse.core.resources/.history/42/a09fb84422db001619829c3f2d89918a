@@ -1,0 +1,19 @@
+package readcontroller;
+
+public class GraphBuilder {
+	
+	public void addPoint(int value){
+		// TODO:
+	}
+	
+	public void setYAxisRange(int min, int max){
+		// TODO:
+	}
+	
+	public void setXAxisRange(int min, int max){
+		// TODO:
+	}
+	
+	
+
+}

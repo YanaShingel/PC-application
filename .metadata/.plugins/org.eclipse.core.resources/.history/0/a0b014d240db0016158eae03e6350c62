@@ -1,0 +1,42 @@
+package readcontroller;
+
+import java.awt.Window;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+import javax.swing.JPanel;
+
+public class TimedGraphBuilder extends GraphBuilder {
+	
+	private Calendar timeStarted;
+	
+	private float xAxisRange;
+	
+	public void setMaxXAxisRange(float r){
+		
+	}
+
+	public TimedGraphBuilder(int x0, int y0, int width, int height,
+			JPanel parent, Window window) {
+		super(x0, y0, width, height, parent, window);
+		
+	}
+	
+	@Override
+	public void draw(boolean run){
+		
+		if (run){
+			super.draw(run);
+			timeStarted = new GregorianCalendar();
+		}		
+		
+	}
+	
+	
+	@Override
+	public void addPoint(float value){
+		
+	}
+	
+
+}

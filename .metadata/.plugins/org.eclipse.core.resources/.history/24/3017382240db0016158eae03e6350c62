@@ -1,0 +1,187 @@
+package readcontroller;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Window;
+import java.awt.image.BufferStrategy;
+import java.util.ArrayList;
+
+import javax.swing.JPanel;
+
+
+public class GraphBuilder {
+	
+	Graphics g;
+	int x0, y0, width, height;
+	
+	boolean running;
+	
+	class Point{
+		public Point(float value, float x) {
+			// TODO Auto-generated constructor stub
+		}
+		int x; int y;
+	}
+	
+	class DrawerThread implements Runnable{
+		
+		@Override
+		public void run() {
+			
+			while (running){
+				try {
+					Thread.sleep(20);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				draw();
+			}
+				
+			
+		}
+		
+	}
+	
+	Thread drawerThread;
+	
+	ArrayList<Point> pointArray;
+	
+	private final float yPaddingTopInPrc 	= 0.05f;
+	private final float xPaddingLeftInPrc 	= 0.05f;
+	private final float yPaddingBottomInPrc = 0.05f;
+	private final float xPaddingRightInPrc 	= 0.05f;
+	
+	private final int yAxisUnitDiv = 10;
+	private final int xAxisUnitDiv = 20;
+	
+	private final float yAxisDivLengthInPrc = 0.01f;
+	private final float xAxisDivLengthInPrc = 0.01f;
+	
+	private final float yAxisValueOffset = 0.03f;
+	private final float xAxisValueOffset = 0.03f;
+	
+	private BufferStrategy bufferStrategy;
+	
+	private float xAxisValueStep;
+	private float yAxisValueStep;
+	
+	private float 	xMinRangeValue;
+	private float 	yMinRangeValue;
+	private float 	xMaxRangeValue;
+	private float 	yMaxRangeValue;
+	private int 	xSkipStep;
+	private int 	ySkipStep;
+	
+	private void drawYAxis(){
+		
+		int x1 = (int) (x0 + xPaddingLeftInPrc * width);
+		int y1 = (int) (y0 + height * yPaddingTopInPrc);		
+		int y2 = (int) (y0 + height * (1 - yPaddingBottomInPrc));
+		
+		g.setColor(Color.GREEN);
+		g.drawLine(x1,y1,x1,y2);
+		
+		int yAxisLength = (int) ((1 - yPaddingBottomInPrc - yPaddingTopInPrc) * height / yAxisUnitDiv);
+		
+		for (int i = 1; i < yAxisUnitDiv; i++){
+			int x1_ = (int) (x0 + yAxisDivLengthInPrc * width + xPaddingLeftInPrc * width);
+			int x2_ = (int) (x0 - yAxisDivLengthInPrc * width + xPaddingLeftInPrc * width);
+			int y1_ = (int) (y0 + yPaddingTopInPrc * height + ( yAxisLength * i) );	
+			g.drawLine(x1_,y1_,x2_,y1_);
+		}
+		
+	}
+	
+	private void drawXAxis(){
+		
+		int x1 = (int) (x0 + xPaddingRightInPrc * width);
+		int x2 = (int) (x0 + (1-xPaddingLeftInPrc) * width);	
+		int y2 = (int) (y0 + height * (1 - yPaddingBottomInPrc));
+		
+		g.setColor(Color.GREEN);
+		g.drawLine(x1,y2,x2,y2);
+		
+		int xAxisLength = (int) ((1 - xPaddingLeftInPrc - xPaddingRightInPrc) * width / xAxisUnitDiv);
+		
+		for (int i = 1; i < xAxisUnitDiv; i++){
+			int x1_ = (int) (x0 + xPaddingLeftInPrc * width + (xAxisLength * i) );
+			int y1_ = (int) (y0 + xAxisDivLengthInPrc * height + (1 -yPaddingBottomInPrc) * height);
+			int y2_ = (int) (y0 - xAxisDivLengthInPrc * height + (1 -yPaddingBottomInPrc) * height);
+			g.drawLine(x1_,y1_,x1_,y2_);
+			
+			if (i % xSkipStep == 0)
+			g.drawString(Float.toString(xMinRangeValue + i * xAxisValueStep), x1_, (int) (y1_ + xAxisValueOffset * height));
+		}
+		
+		
+		
+	}
+	
+	
+	public void draw() {
+		
+		g.setColor(Color.black);
+		g.fillRect(x0, y0, width, height);
+		drawYAxis();
+		drawXAxis();
+		
+		g.dispose();
+		bufferStrategy.show();
+	}
+
+	public void addPoint(float value){
+		
+		pointArray.add(new Point(value));
+		
+	}
+	
+	public void setYAxisRange(float min, float max){
+		
+		yAxisValueStep = (max - min) / yAxisUnitDiv;
+	}
+	
+	public void setXAxisRange(float min, float max){
+		
+		xAxisValueStep = (max - min) / xAxisUnitDiv;
+	}
+	
+	public void setXSkipStep(int s){
+		xSkipStep = s;
+	}
+	
+	public void setYSkipStep(int s){
+		ySkipStep = s;
+	}
+	
+	public GraphBuilder(int x0, int y0, int width, int height, JPanel parent, Window window){
+		
+		bufferStrategy = window.getBufferStrategy();
+		
+		g = bufferStrategy.getDrawGraphics();
+		g.setClip(x0, y0, width, height);
+		g.fillRect(x0, y0, width, height);
+		
+		this.x0 = x0;
+		this.y0 = y0;
+		this.width = width; 
+		this.height = height;
+		
+	}
+	
+	public void draw(boolean run) {
+		
+		if (run){
+			
+			running = true;
+
+			drawerThread = new Thread(new DrawerThread());
+			drawerThread.start();
+
+		}
+		else
+			running = false;
+
+	}
+
+}

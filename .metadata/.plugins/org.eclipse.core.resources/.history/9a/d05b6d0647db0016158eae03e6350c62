@@ -1,0 +1,211 @@
+package readcontroller;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Window;
+import java.awt.image.BufferStrategy;
+import java.util.ArrayList;
+
+import javax.swing.JPanel;
+
+
+public class GraphBuilder {
+	
+	Graphics g;
+	int x0, y0, width, height;
+	
+	boolean running;
+	
+	protected int standardPointCounter;
+	
+	class Point{
+		public Point(float value, float x) {
+			y = value;
+			this.x = x;
+		}
+		float x, y;
+	}
+	
+	class DrawerThread implements Runnable{
+		
+		@Override
+		public void run() {
+			
+			while (running){
+				try {
+					Thread.sleep(20);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				draw();
+			}
+				
+			
+		}
+		
+	}
+	
+	Thread drawerThread;
+	
+	protected ArrayList<Point> pointArray;
+	
+	protected final float yPaddingTopInPrc 	= 0.05f;
+	protected final float xPaddingLeftInPrc 	= 0.05f;
+	protected final float yPaddingBottomInPrc = 0.05f;
+	protected final float xPaddingRightInPrc 	= 0.05f;
+	
+	protected final int yAxisUnitDiv = 10;
+	protected final int xAxisUnitDiv = 20;
+	
+	protected final float yAxisDivLengthInPrc = 0.01f;
+	protected final float xAxisDivLengthInPrc = 0.01f;
+	
+	protected final float yAxisValueOffset = 0.03f;
+	protected final float xAxisValueOffset = 0.03f;
+	
+	protected BufferStrategy bufferStrategy;
+	
+	protected float xAxisValueStep;
+	protected float yAxisValueStep;
+	
+	protected float 	xMinRangeValue;
+	protected float 	yMinRangeValue;
+	protected float 	xMaxRangeValue;
+	protected float 	yMaxRangeValue;
+	protected int 	xSkipStep;
+	protected int 	ySkipStep;
+	
+	protected void drawYAxis(){
+		
+		int x1 = (int) (x0 + xPaddingLeftInPrc * width);
+		int y1 = (int) (y0 + height * yPaddingTopInPrc);		
+		int y2 = (int) (y0 + height * (1 - yPaddingBottomInPrc));
+		
+		g.setColor(Color.GREEN);
+		g.drawLine(x1,y1,x1,y2);
+		
+		int yAxisLength = (int) ((1 - yPaddingBottomInPrc - yPaddingTopInPrc) * height / yAxisUnitDiv);
+		
+		for (int i = 1; i < yAxisUnitDiv; i++){
+			int x1_ = (int) (x0 + yAxisDivLengthInPrc * width + xPaddingLeftInPrc * width);
+			int x2_ = (int) (x0 - yAxisDivLengthInPrc * width + xPaddingLeftInPrc * width);
+			int y1_ = (int) (y0 + yPaddingTopInPrc * height + ( yAxisLength * i) );	
+			g.drawLine(x1_,y1_,x2_,y1_);
+		}
+		
+	}
+	
+	protected void drawXAxis(){
+		
+		int x1 = (int) (x0 + xPaddingRightInPrc * width);
+		int x2 = (int) (x0 + (1-xPaddingLeftInPrc) * width);	
+		int y2 = (int) (y0 + height * (1 - yPaddingBottomInPrc));
+		
+		g.setColor(Color.GREEN);
+		g.drawLine(x1,y2,x2,y2);
+		
+		int xAxisLength = (int) ((1 - xPaddingLeftInPrc - xPaddingRightInPrc) * width / xAxisUnitDiv);
+		
+		for (int i = 1; i < xAxisUnitDiv; i++){
+			int x1_ = (int) (x0 + xPaddingLeftInPrc * width + (xAxisLength * i) );
+			int y1_ = (int) (y0 + xAxisDivLengthInPrc * height + (1 -yPaddingBottomInPrc) * height);
+			int y2_ = (int) (y0 - xAxisDivLengthInPrc * height + (1 -yPaddingBottomInPrc) * height);
+			g.drawLine(x1_,y1_,x1_,y2_);
+			
+			if (i % xSkipStep == 0)
+			g.drawString(Float.toString(xMinRangeValue + i * xAxisValueStep), x1_, (int) (y1_ + xAxisValueOffset * height));
+		}
+		
+		
+		
+	}
+	
+	
+	public void draw() {
+		
+		g.setColor(Color.black);
+		g.fillRect(x0, y0, width, height);
+		drawYAxis();
+		drawXAxis();
+		
+		g.dispose();
+		bufferStrategy.show();
+
+	}
+	
+	public void drawFromTo(int from, int to){
+		
+		g.setColor(Color.black);
+		g.fillRect(x0, y0, width, height);
+		drawYAxis();
+		drawXAxis();
+		
+		for (int i = from; i < to - 1; i++){
+			g.drawLine((int)pointArray.get(i).x, (int)pointArray.get(i).y, 
+					(int)pointArray.get(i+1).x, (int)pointArray.get(i+1).y);
+		}
+		
+		g.dispose();
+		bufferStrategy.show();
+		
+	}
+
+	public void addPoint(float value){
+		
+		pointArray.add(new Point(value, standardPointCounter));
+		standardPointCounter++;
+		
+	}
+	
+	public void setYAxisRange(float min, float max){
+		
+		yAxisValueStep = (max - min) / yAxisUnitDiv;
+	}
+	
+	public void setXAxisRange(float min, float max){
+		
+		xAxisValueStep = (max - min) / xAxisUnitDiv;
+	}
+	
+	public void setXSkipStep(int s){
+		xSkipStep = s;
+	}
+	
+	public void setYSkipStep(int s){
+		ySkipStep = s;
+	}
+	
+	public GraphBuilder(int x0, int y0, int width, int height, JPanel parent, Window window){
+		
+		bufferStrategy = window.getBufferStrategy();
+		
+		g = bufferStrategy.getDrawGraphics();
+		g.setClip(x0, y0, width, height);
+		g.fillRect(x0, y0, width, height);
+		
+		this.x0 = x0;
+		this.y0 = y0;
+		this.width = width; 
+		this.height = height;
+		
+		pointArray = new ArrayList<Point>();
+		
+	}
+	
+	public void init(boolean run) {
+		
+		if (run){
+			
+			running = true;
+			standardPointCounter = 0;
+			drawerThread = new Thread(new DrawerThread());
+			drawerThread.start();
+
+		}
+		else
+			running = false;
+
+	}
+
+}

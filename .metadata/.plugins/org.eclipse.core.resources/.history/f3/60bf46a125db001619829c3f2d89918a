@@ -1,0 +1,76 @@
+package readcontroller;
+
+import java.awt.Graphics;
+import java.util.ArrayList;
+
+import javax.swing.JPanel;
+
+import readcontroller.MainFrame.PointReader;
+
+public class GraphBuilder {
+	
+	Graphics g;
+	int x0, y0, width, height;
+	
+	boolean running;
+	
+	class Point{
+		int x; int y;
+	}
+	
+	class DrawerThread implements Runnable{
+		
+		@Override
+		public void run() {
+			
+			while (running)
+			g.fillRect(x0, y0, width, height);
+		}
+		
+	}
+	
+	Thread drawerThread;
+	
+	ArrayList<Point> pointArray;
+	
+	public void addPoint(int value){
+		// TODO:
+	}
+	
+	public void setYAxisRange(int min, int max){
+		// TODO:
+	}
+	
+	public void setXAxisRange(int min, int max){
+		// TODO:
+	}
+	
+	public GraphBuilder(int x0, int y0, int width, int height, JPanel parent){
+		
+		g = parent.getGraphics();
+		g.setClip(x0, y0, width, height);
+		g.fillRect(x0, y0, width, height);
+		
+		this.x0 = x0;
+		this.y0 = y0;
+		this.width = width; 
+		this.height = height;
+		
+	}
+	
+	public void draw(boolean run) {
+		
+		if (run){
+			
+			running = true;
+
+			drawerThread = new Thread(new DrawerThread());
+			drawerThread.start();
+
+		}
+		else
+			running = false;
+
+	}
+
+}

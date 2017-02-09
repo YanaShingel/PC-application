@@ -1,0 +1,132 @@
+package readcontroller;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.util.ArrayList;
+
+import javax.swing.JPanel;
+
+
+public class GraphBuilder {
+	
+	Graphics g;
+	int x0, y0, width, height;
+	
+	boolean running;
+	
+	class Point{
+		int x; int y;
+	}
+	
+	class DrawerThread implements Runnable{
+		
+		@Override
+		public void run() {
+			
+			while (running){
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				draw();
+			}
+				
+			
+		}
+		
+	}
+	
+	Thread drawerThread;
+	
+	ArrayList<Point> pointArray;
+	
+	private final float yPaddingTopInPrc 	= 0.05f;
+	private final float xPaddingLeftInPrc 	= 0.05f;
+	private final float yPaddingBottomInPrc = 0.05f;
+	private final float xPaddingRightInPrc 	= 0.05f;
+	
+	private final int yAxisUnitDiv = 10;
+	private final int xAxisUnitDiv = 10;
+	
+	private final float yAxisDivLengthInPrc = 0.01f;
+	private final float xAxisDivLengthInPrc = 0.01f;
+	
+	private void drawYAxis(){
+		
+		int x1 = (int) (x0 + xPaddingRightInPrc * width);
+		int y1 = (int) (y0 + height * yPaddingTopInPrc);		
+		int y2 = (int) (y0 + height * (1 - yPaddingBottomInPrc));
+		
+		g.setColor(Color.GREEN);
+		g.drawLine(x1,y1,x1,y2);
+		
+		for (int i = 0; i < yAxisUnitDiv; i++){
+			int x1_ = (int) (x0 + yAxisDivLengthInPrc * width);
+			int x2_ = (int) (x0 - yAxisDivLengthInPrc * width);
+			int y1_ = (int) (y0 + height * yPaddingTopInPrc);		
+		}
+		
+	}
+	
+	private void drawXAxis(){
+		
+		int x1 = (int) (x0 + xPaddingRightInPrc * width);
+		int x2 = (int) (x0 + (1-xPaddingLeftInPrc) * width);	
+		int y2 = (int) (y0 + height * (1 - yPaddingBottomInPrc));
+		
+		g.setColor(Color.GREEN);
+		g.drawLine(x1,y2,x2,y2);
+		
+	}
+	
+	public void draw() {
+		
+		g.setColor(Color.black);
+		g.fillRect(x0, y0, width, height);
+		drawYAxis();
+		drawXAxis();
+	}
+
+	public void addPoint(int value){
+		// TODO:
+	}
+	
+	public void setYAxisRange(int min, int max){
+		
+	}
+	
+	public void setXAxisRange(int min, int max){
+		// TODO:
+	}
+	
+	public GraphBuilder(int x0, int y0, int width, int height, JPanel parent){
+		
+		g = parent.getGraphics();
+		g.setClip(x0, y0, width, height);
+		g.fillRect(x0, y0, width, height);
+		
+		this.x0 = x0;
+		this.y0 = y0;
+		this.width = width; 
+		this.height = height;
+		
+	}
+	
+	public void draw(boolean run) {
+		
+		if (run){
+			
+			running = true;
+
+			drawerThread = new Thread(new DrawerThread());
+			drawerThread.start();
+
+		}
+		else
+			running = false;
+
+	}
+
+}

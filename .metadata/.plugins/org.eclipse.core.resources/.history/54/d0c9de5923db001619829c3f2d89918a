@@ -1,0 +1,37 @@
+package readcontroller;
+
+import java.awt.Graphics;
+import java.util.ArrayList;
+
+import javax.swing.JPanel;
+
+public class GraphBuilder {
+	
+	Graphics g;
+	int x0, y0, x1, y2;
+	
+	class Point{
+		int x; int y;
+	}
+	
+	ArrayList<Point> pointArray;
+	
+	public void addPoint(int value){
+		// TODO:
+	}
+	
+	public void setYAxisRange(int min, int max){
+		// TODO:
+	}
+	
+	public void setXAxisRange(int min, int max){
+		// TODO:
+	}
+	
+	public GraphBuilder(int x0, int y0, int width, int height, JPanel parent){
+		g = parent.getGraphics();
+		g.setClip(x0, y0, x0 + width, y0 + height);
+		
+	}
+
+}
